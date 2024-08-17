@@ -1,0 +1,1 @@
+This is a 2D game created using SDL2 and raycasting
