@@ -23,11 +23,19 @@ SDL_Texture *loadTexture(const char *file, SDL_Renderer *renderer)
 			printf("Unable to create texture from %s! SDL Error: %s\n",
 				   file, SDL_GetError());
 		}
+		else
+		{
+			if (SDL_SetTextureScaleMode(texture, SDL_ScaleModeLinear) != 0)
+			{
+				printf("SDL_SetTextureScaleMode Error: %s\n", SDL_GetError());
+			}
+		}
 	}
 	else
 	{
 		printf("Unable to load image %s! SDL_image Error: %s\n",
 			   file, IMG_GetError());
 	}
+
 	return (texture);
 }
