@@ -1,6 +1,6 @@
 #include "maze.h"
 
-Player Attributes = {1.5, 1.5, 0, 0.03, 0.03};
+Player Attributes = {1.5, 1.5, 0, 0.05, 0.05};
 int map[MAPHEIGHT][MAPWIDTH] = {0};
 
 /**
@@ -62,11 +62,16 @@ void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
  * @Window: The SDL_Window to be destroyed.
  */
 
-void destroySDL(SDL_Texture *wallTexture, SDL_Renderer *Renderer, SDL_Window *Window)
+void destroySDL(SDL_Texture *wallTexture, SDL_Texture *floorTexture, SDL_Renderer *Renderer, SDL_Window *Window)
 {
-	SDL_DestroyTexture(wallTexture);
-	SDL_DestroyRenderer(Renderer);
-	SDL_DestroyWindow(Window);
+	if (wallTexture)
+		SDL_DestroyTexture(wallTexture);
+	if (floorTexture)
+		SDL_DestroyTexture(floorTexture);
+	if (Renderer)
+		SDL_DestroyRenderer(Renderer);
+	if (Window)
+		SDL_DestroyWindow(Window);
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -91,7 +96,7 @@ int main(int argc, char *args[])
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-		return (1);
+		return (EXIT_FAILURE);
 	}
 	else
 	{
@@ -101,7 +106,7 @@ int main(int argc, char *args[])
 		if (Window == NULL)
 		{
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-			return (1);
+			return (EXIT_FAILURE);
 		}
 		else
 		{
@@ -111,7 +116,7 @@ int main(int argc, char *args[])
 				printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
 				SDL_DestroyWindow(Window);
 				SDL_Quit();
-				return (1);
+				return (EXIT_FAILURE);
 			}
 		}
 	}
@@ -144,6 +149,6 @@ int main(int argc, char *args[])
 		drawMapOnWindow(Renderer, &showMap);
 		SDL_RenderPresent(Renderer);
 	}
-	destroySDL(wallTexture, Renderer, Window);
+	destroySDL(wallTexture, floorTexture, Renderer, Window);
 	return (0);
 }
