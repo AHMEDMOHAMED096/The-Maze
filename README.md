@@ -16,9 +16,9 @@ sudo apt-get install libsdl2-dev libsdl2-image-dev
 # Usage:
 
 - [ ] To run the game use "make"
-
-./maze <map file>
-
+```
+./maze "<map file>"
+```
 - [ ] To remove object files and executable file use "make clean"
 
 [Author(s) LinkedIn] (https://www.linkedin.com/in/ahmed-mohamed-816438243/)
