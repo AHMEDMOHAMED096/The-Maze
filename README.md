@@ -7,7 +7,7 @@
 git clone https://github.com/AHMEDMOHAMED096/The-Maze.git
 ```
 ```
-cd the-maze
+cd The-Maze
 ```
 ```
 sudo apt-get install libsdl2-dev libsdl2-image-dev
