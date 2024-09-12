@@ -24,33 +24,30 @@ void drawMap(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 	wall.w = 1;
 	wall.h = lineHeight;
 
-	/* Draw the sky */
+	/* Render the sky */
 	SDL_SetRenderDrawColor(renderer, 0x87, 0xCE, 0xEB, 0xFF);
 	SDL_RenderDrawLine(renderer, x, 0, x, wall.y);
 
-	// // // Render the wall texture
-	// SDL_RenderCopy(renderer, wallTexture, NULL, &wall);
-
 	/* Set wall color based on orientation */
-	if (isNorthSouthWall)
-		SDL_SetRenderDrawColor(renderer, 0xA9, 0xA9, 0xA9, 0xFF);
-	else
-		SDL_SetRenderDrawColor(renderer, 0xD3, 0xD3, 0xD3, 0xFF);
+	// if (isNorthSouthWall)
+	// 	SDL_SetRenderDrawColor(renderer, 0xA9, 0xA9, 0xA9, 0xFF);
+	// else
+	// 	SDL_SetRenderDrawColor(renderer, 0xD3, 0xD3, 0xD3, 0xFF);
 
-	/* Draw the wall */
+	/* Render the wall texture */
 	SDL_RenderFillRect(renderer, &wall);
+	SDL_RenderCopy(renderer, wallTexture, NULL, &wall);
 
-	// Draw the floor texture
+	/* Render the floor texture */
 	// SDL_Rect floor;
 
 	// floor.x = x;
 	// floor.y = (WINDOW_HEIGHT / 2) + (lineHeight / 2);
-	// floor.w = 1; // Width of the slice
+	// floor.w = 1;
 	// floor.h = WINDOW_HEIGHT - floor.y;
-
 	// SDL_RenderCopy(renderer, floorTexture, NULL, &floor);
 
-	/* Draw the floor */
+	/* Render the floor */
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x80, 0x00, 0xFF);
 	SDL_RenderDrawLine(renderer, x, (WINDOW_HEIGHT / 2) + (lineHeight / 2),
 					   x, WINDOW_HEIGHT);
