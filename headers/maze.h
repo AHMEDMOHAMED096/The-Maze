@@ -50,6 +50,7 @@ void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 			  SDL_Texture *floorTexture);
 
 SDL_Texture *loadTexture(const char *file, SDL_Renderer *renderer);
-void destroySDL(SDL_Texture *wallTexture, SDL_Texture *floorTexture, SDL_Renderer *Renderer, SDL_Window *Window);
+void destroySDL(SDL_Texture *wallTexture, SDL_Texture *floorTexture,
+				SDL_Renderer *Renderer, SDL_Window *Window);
 
 #endif /* MAZE_H */
