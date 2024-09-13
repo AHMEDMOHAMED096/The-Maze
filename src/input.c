@@ -84,8 +84,7 @@ void updatePlayerPosition(bool moveForward, bool moveBackward,
 	float newX, newY;
 	int mapX, mapY;
 
-	newX = Attributes.x;
-	newY = Attributes.y;
+	newX = Attributes.x, newY = Attributes.y;
 	if (moveForward && !moveBackward)
 	{
 		newX += cos(Attributes.playerDir) * Attributes.moveSpeed;
@@ -106,12 +105,10 @@ void updatePlayerPosition(bool moveForward, bool moveBackward,
 		newX -= sin(Attributes.playerDir) * Attributes.moveSpeed;
 		newY += cos(Attributes.playerDir) * Attributes.moveSpeed;
 	}
-	mapX = (int)newX;
-	mapY = (int)newY;
+	mapX = (int)newX, mapY = (int)newY;
 	if (map[mapX][mapY] == 0)
 	{
-		Attributes.x = newX;
-		Attributes.y = newY;
+		Attributes.x = newX, Attributes.y = newY;
 	}
 	else
 	{
