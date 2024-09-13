@@ -33,6 +33,7 @@ extern Player Attributes;
 extern int map[MAPHEIGHT][MAPWIDTH];
 
 bool parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH]);
+
 void handleInput(SDL_Event e, bool *moveForward,
 				 bool *moveBackward, bool *moveLeft,
 				 bool *moveRight, bool *rotateLeft,
@@ -42,6 +43,7 @@ void updatePlayerPosition(bool moveForward, bool moveBackward, bool moveLeft,
 						  bool moveRight, bool rotateLeft, bool rotateRight);
 
 void drawMapOnWindow(SDL_Renderer *renderer, bool *showMap);
+
 void drawMap(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 			 SDL_Texture *floorTexture,
 			 int x, int lineHeight, bool isNorthSouthWall);
@@ -50,11 +52,15 @@ void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 			  SDL_Texture *floorTexture);
 
 SDL_Texture *loadTexture(const char *file, SDL_Renderer *renderer);
+
 void destroySDL(SDL_Texture *wallTexture, SDL_Texture *floorTexture,
 				SDL_Renderer *Renderer, SDL_Window *Window);
+
 bool initializeSDL(SDL_Window **Window, SDL_Renderer **Renderer);
+
 bool loadTextures(SDL_Texture **wallTexture,
 				  SDL_Texture **floorTexture, SDL_Renderer *Renderer);
+				  
 void gameLoop(SDL_Renderer *Renderer, SDL_Texture *wallTexture,
 			  SDL_Texture *floorTexture, const char *mapFile);
 
