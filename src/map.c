@@ -29,28 +29,28 @@ void drawMap(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 	SDL_RenderDrawLine(renderer, x, 0, x, wall.y);
 
 	/* Set wall color based on orientation */
-	// if (isNorthSouthWall)
-	// 	SDL_SetRenderDrawColor(renderer, 0xA9, 0xA9, 0xA9, 0xFF);
-	// else
-	// 	SDL_SetRenderDrawColor(renderer, 0xD3, 0xD3, 0xD3, 0xFF);
+	if (isNorthSouthWall)
+		SDL_SetRenderDrawColor(renderer, 0xA9, 0xA9, 0xA9, 0xFF);
+	else
+		SDL_SetRenderDrawColor(renderer, 0xD3, 0xD3, 0xD3, 0xFF);
 
 	/* Render the wall texture */
 	SDL_RenderFillRect(renderer, &wall);
 	SDL_RenderCopy(renderer, wallTexture, NULL, &wall);
 
-	/* Render the floor texture */
-	// SDL_Rect floor;
-
-	// floor.x = x;
-	// floor.y = (WINDOW_HEIGHT / 2) + (lineHeight / 2);
-	// floor.w = 1;
-	// floor.h = WINDOW_HEIGHT - floor.y;
-	// SDL_RenderCopy(renderer, floorTexture, NULL, &floor);
-
 	/* Render the floor */
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x80, 0x00, 0xFF);
 	SDL_RenderDrawLine(renderer, x, (WINDOW_HEIGHT / 2) + (lineHeight / 2),
 					   x, WINDOW_HEIGHT);
+
+	/* Render the floor texture */
+	SDL_Rect floor;
+
+	floor.x = x;
+	floor.y = (WINDOW_HEIGHT / 2) + (lineHeight / 2);
+	floor.w = 1;
+	floor.h = WINDOW_HEIGHT - floor.y;
+	SDL_RenderCopy(renderer, floorTexture, NULL, &floor);
 }
 
 /**
@@ -92,9 +92,10 @@ void drawMapOnWindow(SDL_Renderer *renderer, bool *showMap)
  * parseMap - Parses a map file and loads its data into a 2D array.
  * @filePath: The path to the map file to load.
  * @map: A 2D array to store the map data.
+ * Return: True on success.
  */
 
-void parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH])
+bool parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH])
 {
 	int height, width, i;
 	FILE *file = NULL;
@@ -104,9 +105,9 @@ void parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH])
 	if (file == NULL)
 	{
 		perror("Error opening file");
+		return (false);
 		exit(EXIT_FAILURE);
 	}
-
 	height = 0;
 	while (fgets(line, sizeof(line), file) && height < MAPHEIGHT)
 	{
@@ -126,6 +127,7 @@ void parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH])
 				else
 				{
 					fprintf(stderr, "Invalid character in map file: %c\n", line[i]);
+					return (false);
 					exit(EXIT_FAILURE);
 				}
 				width++;
@@ -133,6 +135,58 @@ void parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH])
 		}
 		height++;
 	}
-
 	fclose(file);
+	return (true);
+}
+
+/**
+ * castRays - Casts rays to render the 3D view of the game world.
+ * @renderer: The SDL_Renderer to use for rendering the game.
+ * @wallTexture: The SDL_Texture to use for rendering the walls.
+ * @floorTexture: The SDL_Texture to use for rendering the floor.
+ */
+
+void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
+			  SDL_Texture *floorTexture)
+{
+	float rayAngle, rayX, rayY, rayDirX, rayDirY, distance;
+	bool hit, isNorthSouthWall;
+	int mapX, mapY, lineHeight, x;
+
+	for (x = 0; x < WINDOW_WIDTH; x++)
+	{
+		rayAngle = Attributes.playerDir - 0.5f + (float)x / WINDOW_WIDTH;
+		rayX = Attributes.x;
+		rayY = Attributes.y;
+		rayDirX = cos(rayAngle);
+		rayDirY = sin(rayAngle);
+		hit = false;
+		isNorthSouthWall = false;
+		while (!hit)
+		{
+			rayX += rayDirX * 0.01f;
+			rayY += rayDirY * 0.01f;
+			mapX = (int)rayX;
+			mapY = (int)rayY;
+
+			if (mapX >= 0 && mapX < MAPWIDTH && mapY >= 0 && mapY < MAPHEIGHT)
+			{
+				if (map[mapX][mapY] == 1)
+				{
+					hit = true;
+					if (fabs(rayDirX) > fabs(rayDirY))
+						isNorthSouthWall = false;
+					else
+						isNorthSouthWall = true;
+					distance = sqrt((rayX - Attributes.x) * (rayX - Attributes.x) +
+									(rayY - Attributes.y) * (rayY - Attributes.y));
+					lineHeight = (int)(WINDOW_HEIGHT / distance);
+					drawMap(renderer, wallTexture, floorTexture,
+							x, lineHeight, isNorthSouthWall);
+				}
+			}
+			else
+				hit = true;
+		}
+	}
 }
