@@ -60,7 +60,7 @@ bool initializeSDL(SDL_Window **Window, SDL_Renderer **Renderer);
 
 bool loadTextures(SDL_Texture **wallTexture,
 				  SDL_Texture **floorTexture, SDL_Renderer *Renderer);
-				  
+
 void gameLoop(SDL_Renderer *Renderer, SDL_Texture *wallTexture,
 			  SDL_Texture *floorTexture, const char *mapFile);
 
