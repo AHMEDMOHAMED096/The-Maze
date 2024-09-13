@@ -58,11 +58,13 @@ void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 /**
  * destroySDL - Cleans up and destroys SDL resources.
  * @wallTexture: The SDL_Texture to be destroyed.
+ * @floorTexture: The SDL_Texture to be destroyed.
  * @Renderer: The SDL_Renderer to be destroyed.
  * @Window: The SDL_Window to be destroyed.
  */
 
-void destroySDL(SDL_Texture *wallTexture, SDL_Texture *floorTexture, SDL_Renderer *Renderer, SDL_Window *Window)
+void destroySDL(SDL_Texture *wallTexture, SDL_Texture *floorTexture,
+				SDL_Renderer *Renderer, SDL_Window *Window)
 {
 	if (wallTexture)
 		SDL_DestroyTexture(wallTexture);
@@ -85,6 +87,7 @@ void destroySDL(SDL_Texture *wallTexture, SDL_Texture *floorTexture, SDL_Rendere
 
 int main(int argc, char *args[])
 {
+
 	if (argc != 2)
 	{
 		fprintf(stderr, "Usage: %s <map file>\n", args[0]);
