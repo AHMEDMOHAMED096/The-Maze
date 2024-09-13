@@ -1,6 +1,6 @@
 # The compiler and flags
 CC = gcc
-CFLAGS = -Iheaders
+CFLAGS = -Iheaders -Wall -Werror -Wextra -pedantic
 LDFLAGS = -lSDL2 -lSDL2_image -lm
 
 # The target executable
