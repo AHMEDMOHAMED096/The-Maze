@@ -25,10 +25,7 @@ SDL_Texture *loadTexture(const char *file, SDL_Renderer *renderer)
 		}
 		else
 		{
-			if (SDL_SetTextureScaleMode(texture, SDL_ScaleModeLinear) != 0)
-			{
-				printf("SDL_SetTextureScaleMode Error: %s\n", SDL_GetError());
-			}
+			SDL_SetTextureScaleMode(texture, SDL_ScaleModeNearest);
 		}
 	}
 	else
@@ -36,7 +33,6 @@ SDL_Texture *loadTexture(const char *file, SDL_Renderer *renderer)
 		printf("Unable to load image %s! SDL_image Error: %s\n",
 			   file, IMG_GetError());
 	}
-
 	return (texture);
 }
 
@@ -51,7 +47,7 @@ SDL_Texture *loadTexture(const char *file, SDL_Renderer *renderer)
 bool loadTextures(SDL_Texture **wallTexture,
 				  SDL_Texture **floorTexture, SDL_Renderer *Renderer)
 {
-	*wallTexture = loadTexture("wallTexture.jpg", Renderer);
+	*wallTexture = loadTexture("wallTexture.png", Renderer);
 	*floorTexture = loadTexture("floorTexture.jpg", Renderer);
 
 	return ((*wallTexture != NULL || *floorTexture != NULL));
