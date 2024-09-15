@@ -46,7 +46,7 @@ void drawMapOnWindow(SDL_Renderer *renderer, bool *showMap);
 
 void drawMap(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 			 SDL_Texture *floorTexture,
-			 int x, int lineHeight, bool isNorthSouthWall);
+			 int currentPixel, int lineHeight, bool isNorthSouthWall);
 
 void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 			  SDL_Texture *floorTexture);
