@@ -7,7 +7,7 @@
  * @renderer: The SDL_Renderer to use for rendering the map.
  * @wallTexture: The SDL_Texture to use for rendering walls.
  * @floorTexture: The SDL_Texture to use for rendering the floor.
- * @x: The x-coordinate for the position to draw.
+ * @currentPixel: The x-coordinate for the position to draw.
  * @lineHeight: The height of the line to draw.
  * @isNorthSouthWall: A boolean flag indicating whether
  *  the wall is oriented north-south.
@@ -15,18 +15,21 @@
 
 void drawMap(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 			 SDL_Texture *floorTexture,
-			 int x, int lineHeight, bool isNorthSouthWall)
+			 int currentPixel, int lineHeight, bool isNorthSouthWall)
 {
 	SDL_Rect wall;
+	int upper_half_of_map, lower_half_of_map;
 
-	wall.x = x;
-	wall.y = (WINDOW_HEIGHT / 2) - (lineHeight / 2);
+	upper_half_of_map = (WINDOW_HEIGHT / 2) - (lineHeight / 2);
+	lower_half_of_map = (WINDOW_HEIGHT / 2) + (lineHeight / 2);
+	wall.x = currentPixel;
+	wall.y = upper_half_of_map;
 	wall.w = 1;
 	wall.h = lineHeight;
 
 	/* Render the sky */
 	SDL_SetRenderDrawColor(renderer, 0x87, 0xCE, 0xEB, 0xFF);
-	SDL_RenderDrawLine(renderer, x, 0, x, wall.y);
+	SDL_RenderDrawLine(renderer, currentPixel, 0, currentPixel, wall.y);
 
 	/* Set wall color based on orientation */
 	if (isNorthSouthWall)
@@ -40,14 +43,14 @@ void drawMap(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 
 	/* Render the floor */
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x80, 0x00, 0xFF);
-	SDL_RenderDrawLine(renderer, x, (WINDOW_HEIGHT / 2) + (lineHeight / 2),
-					   x, WINDOW_HEIGHT);
+	SDL_RenderDrawLine(renderer, currentPixel, lower_half_of_map,
+					   currentPixel, WINDOW_HEIGHT);
 
 	/* Render the floor texture */
 	SDL_Rect floor;
 
-	floor.x = x;
-	floor.y = (WINDOW_HEIGHT / 2) + (lineHeight / 2);
+	floor.x = currentPixel;
+	floor.y = lower_half_of_map;
 	floor.w = 1;
 	floor.h = WINDOW_HEIGHT - floor.y;
 	SDL_RenderCopy(renderer, floorTexture, NULL, &floor);
@@ -151,11 +154,11 @@ void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 {
 	float rayAngle, rayX, rayY, rayDirX, rayDirY, distance;
 	bool hit, isNorthSouthWall;
-	int mapX, mapY, lineHeight, x;
+	int mapX, mapY, lineHeight, currentPixel;
 
-	for (x = 0; x < WINDOW_WIDTH; x++)
+	for (currentPixel = 0; currentPixel < WINDOW_WIDTH; currentPixel++)
 	{
-		rayAngle = Attributes.playerDir - 0.5f + (float)x / WINDOW_WIDTH;
+		rayAngle = Attributes.playerDir - 0.5f + (float)currentPixel / WINDOW_WIDTH;
 		rayX = Attributes.x;
 		rayY = Attributes.y;
 		rayDirX = cos(rayAngle);
@@ -182,7 +185,7 @@ void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 									(rayY - Attributes.y) * (rayY - Attributes.y));
 					lineHeight = (int)(WINDOW_HEIGHT / distance);
 					drawMap(renderer, wallTexture, floorTexture,
-							x, lineHeight, isNorthSouthWall);
+							currentPixel, lineHeight, isNorthSouthWall);
 				}
 			}
 			else
