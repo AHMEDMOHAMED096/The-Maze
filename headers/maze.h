@@ -22,34 +22,34 @@
  * @playerDir: The direction the player is facing.
  * @moveSpeed: The speed at which the player moves.
  * @rotationSpeed: The speed at which the player rotates.
+ * @map: The 2D array representing the game map.
  */
 
 typedef struct
 {
 	float x, y, playerDir, moveSpeed, rotationSpeed;
-} Player;
+	int map[MAPHEIGHT][MAPWIDTH];
+} Game;
 
-extern Player Attributes;
-extern int map[MAPHEIGHT][MAPWIDTH];
-
-bool parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH]);
+bool parseMap(const char *filePath, Game *game);
 
 void handleInput(SDL_Event e, bool *moveForward,
 				 bool *moveBackward, bool *moveLeft,
 				 bool *moveRight, bool *rotateLeft,
 				 bool *rotateRight, bool *quit, bool *showMap);
 
-void updatePlayerPosition(bool moveForward, bool moveBackward, bool moveLeft,
-						  bool moveRight, bool rotateLeft, bool rotateRight);
+void updatePlayerPosition(bool moveForward, bool moveBackward,
+						  bool moveLeft, bool moveRight, bool rotateLeft, bool rotateRight,
+						  Game *game);
 
-void drawMapOnWindow(SDL_Renderer *renderer, bool *showMap);
+void drawMapOnWindow(SDL_Renderer *renderer, bool *showMap, Game *game);
 
 void drawMap(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 			 SDL_Texture *floorTexture,
 			 int currentPixel, int lineHeight, bool isNorthSouthWall);
 
 void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
-			  SDL_Texture *floorTexture);
+			  SDL_Texture *floorTexture, Game *game);
 
 SDL_Texture *loadTexture(const char *file, SDL_Renderer *renderer);
 
@@ -62,6 +62,7 @@ bool loadTextures(SDL_Texture **wallTexture,
 				  SDL_Texture **floorTexture, SDL_Renderer *Renderer);
 
 void gameLoop(SDL_Renderer *Renderer, SDL_Texture *wallTexture,
-			  SDL_Texture *floorTexture, const char *mapFile);
+			  SDL_Texture *floorTexture, const char *mapFile,
+			  Game *game);
 
 #endif /* MAZE_H */

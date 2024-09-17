@@ -22,6 +22,9 @@ SDL_Texture *loadTexture(const char *file, SDL_Renderer *renderer)
 		{
 			printf("Unable to create texture from %s! SDL Error: %s\n",
 				   file, SDL_GetError());
+			SDL_DestroyRenderer(renderer);
+			IMG_Quit();
+			SDL_Quit();
 		}
 		else
 		{
@@ -32,6 +35,10 @@ SDL_Texture *loadTexture(const char *file, SDL_Renderer *renderer)
 	{
 		printf("Unable to load image %s! SDL_image Error: %s\n",
 			   file, IMG_GetError());
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyTexture(texture);
+		IMG_Quit();
+		SDL_Quit();
 	}
 	return (texture);
 }

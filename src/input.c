@@ -76,49 +76,51 @@ void handleInput(SDL_Event e, bool *moveForward,
  *  the player should rotate left.
  * @rotateRight: A boolean flag indicating whether
  *  the player should rotate right.
+ * @game: A pointer to Game structure.
  */
 
 void updatePlayerPosition(bool moveForward, bool moveBackward,
-						  bool moveLeft, bool moveRight, bool rotateLeft, bool rotateRight)
+						  bool moveLeft, bool moveRight, bool rotateLeft,
+						  bool rotateRight, Game *game)
 {
 	float newX, newY;
 	int mapX, mapY;
 
-	newX = Attributes.x, newY = Attributes.y;
+	newX = game->x, newY = game->y;
 	if (moveForward && !moveBackward)
 	{
-		newX += cos(Attributes.playerDir) * Attributes.moveSpeed;
-		newY += sin(Attributes.playerDir) * Attributes.moveSpeed;
+		newX += cos(game->playerDir) * game->moveSpeed;
+		newY += sin(game->playerDir) * game->moveSpeed;
 	}
 	if (moveBackward && !moveForward)
 	{
-		newX -= cos(Attributes.playerDir) * Attributes.moveSpeed;
-		newY -= sin(Attributes.playerDir) * Attributes.moveSpeed;
+		newX -= cos(game->playerDir) * game->moveSpeed;
+		newY -= sin(game->playerDir) * game->moveSpeed;
 	}
 	if (moveLeft && !moveRight)
 	{
-		newX += sin(Attributes.playerDir) * Attributes.moveSpeed;
-		newY -= cos(Attributes.playerDir) * Attributes.moveSpeed;
+		newX += sin(game->playerDir) * game->moveSpeed;
+		newY -= cos(game->playerDir) * game->moveSpeed;
 	}
 	if (moveRight && !moveLeft)
 	{
-		newX -= sin(Attributes.playerDir) * Attributes.moveSpeed;
-		newY += cos(Attributes.playerDir) * Attributes.moveSpeed;
+		newX -= sin(game->playerDir) * game->moveSpeed;
+		newY += cos(game->playerDir) * game->moveSpeed;
 	}
 	mapX = (int)newX, mapY = (int)newY;
-	if (map[mapX][mapY] == 0)
+	if (game->map[mapX][mapY] == 0)
 	{
-		Attributes.x = newX, Attributes.y = newY;
+		game->x = newX, game->y = newY;
 	}
 	else
 	{
-		if (map[(int)Attributes.x][mapY] == 0)
-			Attributes.y = newY;
-		else if (map[mapX][(int)Attributes.y] == 0)
-			Attributes.x = newX;
+		if (game->map[(int)game->x][mapY] == 0)
+			game->y = newY;
+		else if (game->map[mapX][(int)game->y] == 0)
+			game->x = newX;
 	}
 	if (rotateLeft && !rotateRight)
-		Attributes.playerDir -= Attributes.rotationSpeed;
+		game->playerDir -= game->rotationSpeed;
 	if (rotateRight && !rotateLeft)
-		Attributes.playerDir += Attributes.rotationSpeed;
+		game->playerDir += game->rotationSpeed;
 }

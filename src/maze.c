@@ -1,8 +1,5 @@
 #include "maze.h"
 
-Player Attributes = {1.5, 1.5, 0, 0.05, 0.05};
-int map[MAPHEIGHT][MAPWIDTH] = {0};
-
 /**
  * destroySDL - Cleans up and destroys SDL resources.
  * @wallTexture: The SDL_Texture to be destroyed.
@@ -39,6 +36,7 @@ bool initializeSDL(SDL_Window **Window, SDL_Renderer **Renderer)
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		SDL_Quit();
 		return (false);
 	}
 
@@ -48,6 +46,7 @@ bool initializeSDL(SDL_Window **Window, SDL_Renderer **Renderer)
 	if (*Window == NULL)
 	{
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+		SDL_Quit();
 		return (false);
 	}
 
@@ -69,10 +68,11 @@ bool initializeSDL(SDL_Window **Window, SDL_Renderer **Renderer)
  * @wallTexture: A pointer to the SDL_Texture representing the wall texture.
  * @floorTexture: A pointer to the SDL_Texture representing the floor texture.
  * @mapFile: Path to the map file.
+ * @game: A pointer to Game structure.
  */
 
 void gameLoop(SDL_Renderer *Renderer, SDL_Texture *wallTexture,
-			  SDL_Texture *floorTexture, const char *mapFile)
+			  SDL_Texture *floorTexture, const char *mapFile, Game *game)
 {
 	bool quit = false, showMap = false, moveForward = false, moveBackward = false;
 	bool moveRight = false, rotateLeft = false;
@@ -91,13 +91,13 @@ void gameLoop(SDL_Renderer *Renderer, SDL_Texture *wallTexture,
 							&rotateLeft, &rotateRight, &quit, &showMap);
 		}
 		updatePlayerPosition(moveForward, moveBackward, moveLeft,
-							 moveRight, rotateLeft, rotateRight);
+							 moveRight, rotateLeft, rotateRight, game);
 		/* Render the scene */
 		SDL_SetRenderDrawColor(Renderer, 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(Renderer);
-		parseMap(mapFile, map);
-		castRays(Renderer, wallTexture, floorTexture);
-		drawMapOnWindow(Renderer, &showMap);
+		parseMap(mapFile, game);
+		castRays(Renderer, wallTexture, floorTexture, game);
+		drawMapOnWindow(Renderer, &showMap, game);
 		SDL_RenderPresent(Renderer);
 	}
 }
@@ -111,6 +111,14 @@ void gameLoop(SDL_Renderer *Renderer, SDL_Texture *wallTexture,
 
 int main(int argc, char *args[])
 {
+	Game Attributes;
+
+	Attributes.x = 1.5f;
+	Attributes.y = 1.5f;
+	Attributes.playerDir = 0.0;
+	Attributes.moveSpeed = 0.05f;
+	Attributes.rotationSpeed = 0.03f;
+
 	if (argc != 2)
 	{
 		fprintf(stderr, "Usage: %s <map file>\n", args[0]);
@@ -133,15 +141,14 @@ int main(int argc, char *args[])
 		return (EXIT_FAILURE);
 	}
 
-	if (!parseMap(args[1], map))
+	if (!parseMap(args[1], &Attributes))
 	{
 		fprintf(stderr, "Failed to parse map file: %s\n", args[1]);
 		destroySDL(wallTexture, floorTexture, Renderer, Window);
 		return (EXIT_FAILURE);
 	}
 
-	gameLoop(Renderer, wallTexture, floorTexture, args[1]);
-
+	gameLoop(Renderer, wallTexture, floorTexture, args[1], &Attributes);
 	destroySDL(wallTexture, floorTexture, Renderer, Window);
 	return (0);
 }

@@ -62,9 +62,10 @@ void drawMap(SDL_Renderer *renderer, SDL_Texture *wallTexture,
  * @renderer: The SDL_Renderer to use for rendering the map.
  * @showMap: A pointer to a boolean flag indicating
  *  whether the map should be shown.
+ * @game: A pointer to Game structure.
  */
 
-void drawMapOnWindow(SDL_Renderer *renderer, bool *showMap)
+void drawMapOnWindow(SDL_Renderer *renderer, bool *showMap, Game *game)
 {
 	int i, j;
 
@@ -87,18 +88,18 @@ void drawMapOnWindow(SDL_Renderer *renderer, bool *showMap)
 	/* Draw the line of sight */
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_RenderDrawLine(renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
-					   Attributes.x + 150 * cos(Attributes.playerDir),
-					   Attributes.y + 150 * sin(Attributes.playerDir));
+					   game->x + 150 * cos(game->playerDir),
+					   game->y + 150 * sin(game->playerDir));
 }
 
 /**
  * parseMap - Parses a map file and loads its data into a 2D array.
  * @filePath: The path to the map file to load.
- * @map: A 2D array to store the map data.
+ * @game: A pointer to Game structure.
  * Return: True on success.
  */
 
-bool parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH])
+bool parseMap(const char *filePath, Game *game)
 {
 	int height, width, i;
 	FILE *file = NULL;
@@ -121,17 +122,17 @@ bool parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH])
 			{
 				if (line[i] == 'w')
 				{
-					map[height][width] = 1;
+					game->map[height][width] = 1;
 				}
 				else if (line[i] == 'e')
 				{
-					map[height][width] = 0;
+					game->map[height][width] = 0;
 				}
 				else
 				{
 					fprintf(stderr, "Invalid character in map file: %c\n", line[i]);
+					fclose(file);
 					return (false);
-					exit(EXIT_FAILURE);
 				}
 				width++;
 			}
@@ -147,10 +148,11 @@ bool parseMap(const char *filePath, int map[MAPHEIGHT][MAPWIDTH])
  * @renderer: The SDL_Renderer to use for rendering the game.
  * @wallTexture: The SDL_Texture to use for rendering the walls.
  * @floorTexture: The SDL_Texture to use for rendering the floor.
+ * @game: A pointer to Game structure.
  */
 
 void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
-			  SDL_Texture *floorTexture)
+			  SDL_Texture *floorTexture, Game *game)
 {
 	float rayAngle, rayX, rayY, rayDirX, rayDirY, distance;
 	bool hit, isNorthSouthWall;
@@ -158,9 +160,9 @@ void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 
 	for (currentPixel = 0; currentPixel < WINDOW_WIDTH; currentPixel++)
 	{
-		rayAngle = Attributes.playerDir - 0.5f + (float)currentPixel / WINDOW_WIDTH;
-		rayX = Attributes.x;
-		rayY = Attributes.y;
+		rayAngle = game->playerDir - 0.5f + (float)currentPixel / WINDOW_WIDTH;
+		rayX = game->x;
+		rayY = game->y;
 		rayDirX = cos(rayAngle);
 		rayDirY = sin(rayAngle);
 		hit = false;
@@ -174,15 +176,15 @@ void castRays(SDL_Renderer *renderer, SDL_Texture *wallTexture,
 
 			if (mapX >= 0 && mapX < MAPWIDTH && mapY >= 0 && mapY < MAPHEIGHT)
 			{
-				if (map[mapX][mapY] == 1)
+				if (game->map[mapX][mapY] == 1)
 				{
 					hit = true;
 					if (fabs(rayDirX) > fabs(rayDirY))
 						isNorthSouthWall = false;
 					else
 						isNorthSouthWall = true;
-					distance = sqrt((rayX - Attributes.x) * (rayX - Attributes.x) +
-									(rayY - Attributes.y) * (rayY - Attributes.y));
+					distance = sqrt((rayX - game->x) * (rayX - game->x) +
+									(rayY - game->y) * (rayY - game->y));
 					lineHeight = (int)(WINDOW_HEIGHT / distance);
 					drawMap(renderer, wallTexture, floorTexture,
 							currentPixel, lineHeight, isNorthSouthWall);
